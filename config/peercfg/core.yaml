@@ -1,5 +1,5 @@
-# core.yaml - Configuración básica del peer para Fabric 2.5
-# Coloca este archivo en /home/raul/tesis-blockchain/config/peercfg/core.yaml
+# core.yaml - Configuración del peer para Fabric 2.5
+# SOLUCIÓN al problema de chaincode externo
 
 # Configuración del peer
 peer:
@@ -52,10 +52,55 @@ peer:
       Hash: SHA2
       Security: 256
 
-# Configuración de chaincode
+# Configuración de chaincode - CLAVE PARA SOLUCIONAR EL PROBLEMA
 chaincode:
+  # Configuración del builder de chaincode
+  builder: hyperledger/fabric-ccenv:2.5
+  pull: false
+
+  # Runtime para diferentes lenguajes
+  golang:
+    runtime: hyperledger/fabric-baseos:2.5
+    dynamicLink: false
+  node:
+    runtime: hyperledger/fabric-nodeenv:2.5
+  java:
+    runtime: hyperledger/fabric-javaenv:2.5
+
+  # Configuraciones críticas para evitar el builder externo
+  mode: net
+  keepalive: 0
+  startuptimeout: 300s
+  executetimeout: 30s
+  installTimeout: 300s
+
+  # Configuración para chaincodes del sistema
+  system:
+    cscc: enable
+    lscc: enable
+    escc: enable
+    vscc: enable
+    qscc: enable
+
+  # Configuración de logging
   logging:
     spec: INFO
+
+# Configuración de VM
+vm:
+  endpoint: unix:///host/var/run/docker.sock
+  docker:
+    tls:
+      enabled: false
+    attachStdout: false
+    hostConfig:
+      NetworkMode: lognetwork
+      LogConfig:
+        Type: json-file
+        Config:
+          max-size: "50m"
+          max-file: "5"
+      Memory: 2147483648
 
 # Configuración de logging
 logging:
@@ -64,3 +109,9 @@ logging:
 # Configuración de métricas
 metrics:
   provider: disabled
+
+# Configuración de operaciones
+operations:
+  listenAddress: 0.0.0.0:9445
+  tls:
+    enabled: false
