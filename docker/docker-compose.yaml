@@ -1,7 +1,3 @@
-# docker-compose.yaml
-# Archivo que define todos los contenedores necesarios para la red blockchain
-# Incluye orderer, peers, CAs y base de datos CouchDB
-
 version: '3.7'
 
 volumes:
@@ -16,10 +12,9 @@ networks:
     name: lognetwork
 
 services:
-  # Orderer - Servicio de ordenamiento de transacciones
   orderer.lognetwork.com:
     container_name: orderer.lognetwork.com
-    image: hyperledger/fabric-orderer:latest
+    image: hyperledger/fabric-orderer:2.5
     labels:
       service: hyperledger-fabric
     environment:
@@ -36,7 +31,8 @@ services:
       - ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
       - ORDERER_GENERAL_CLUSTER_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
       - ORDERER_GENERAL_BOOTSTRAPMETHOD=file
-      - ORDERER_GENERAL_BOOTSTRAPFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_BOOTSTRAPFILE=/etc/hyperledger/fabric/genesisblock
+      - ORDERER_FILELEDGER_LOCATION=/var/hyperledger/production/orderer
       - ORDERER_CHANNELPARTICIPATION_ENABLED=true
       - ORDERER_ADMIN_TLS_ENABLED=true
       - ORDERER_ADMIN_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
@@ -51,7 +47,7 @@ services:
     volumes:
       - /home/raul/tesis-blockchain/crypto/ordererOrganizations/lognetwork.com/orderers/orderer.lognetwork.com/msp:/var/hyperledger/orderer/msp
       - /home/raul/tesis-blockchain/crypto/ordererOrganizations/lognetwork.com/orderers/orderer.lognetwork.com/tls:/var/hyperledger/orderer/tls
-      - /home/raul/tesis-blockchain/config/orderer.genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+      - /home/raul/tesis-blockchain/config/orderer.genesis.block:/etc/hyperledger/fabric/genesisblock
       - lognetwork.com:/var/hyperledger/production/orderer
     ports:
       - 7050:7050
@@ -60,9 +56,8 @@ services:
     networks:
       - lognetwork
 
-  # CA para LogProvider
   ca.logprovider.lognetwork.com:
-    image: hyperledger/fabric-ca:latest
+    image: hyperledger/fabric-ca:1.5
     labels:
       service: hyperledger-fabric
     environment:
@@ -81,7 +76,6 @@ services:
     networks:
       - lognetwork
 
-  # CouchDB para peer0.logprovider
   couchdb0.logprovider:
     container_name: couchdb0.logprovider
     image: couchdb:3.3.2
@@ -101,10 +95,9 @@ services:
       retries: 5
       start_period: 40s
 
-  # Peer0 de LogProvider
   peer0.logprovider.lognetwork.com:
     container_name: peer0.logprovider.lognetwork.com
-    image: hyperledger/fabric-peer:latest
+    image: hyperledger/fabric-peer:2.5
     labels:
       service: hyperledger-fabric
     environment:
@@ -153,7 +146,6 @@ services:
       couchdb0.logprovider:
         condition: service_healthy
 
-  # CouchDB para peer1.logprovider
   couchdb1.logprovider:
     container_name: couchdb1.logprovider
     image: couchdb:3.3.2
@@ -173,10 +165,9 @@ services:
       retries: 5
       start_period: 40s
 
-  # Peer1 de LogProvider
   peer1.logprovider.lognetwork.com:
     container_name: peer1.logprovider.lognetwork.com
-    image: hyperledger/fabric-peer:latest
+    image: hyperledger/fabric-peer:2.5
     labels:
       service: hyperledger-fabric
     environment:
@@ -225,9 +216,8 @@ services:
       couchdb1.logprovider:
         condition: service_healthy
 
-  # CA para LogAuditor
   ca.logauditor.lognetwork.com:
-    image: hyperledger/fabric-ca:latest
+    image: hyperledger/fabric-ca:1.5
     labels:
       service: hyperledger-fabric
     environment:
@@ -246,7 +236,6 @@ services:
     networks:
       - lognetwork
 
-  # CouchDB para peer0.logauditor
   couchdb0.logauditor:
     container_name: couchdb0.logauditor
     image: couchdb:3.3.2
@@ -266,10 +255,9 @@ services:
       retries: 5
       start_period: 40s
 
-  # Peer0 de LogAuditor
   peer0.logauditor.lognetwork.com:
     container_name: peer0.logauditor.lognetwork.com
-    image: hyperledger/fabric-peer:latest
+    image: hyperledger/fabric-peer:2.5
     labels:
       service: hyperledger-fabric
     environment:
@@ -318,7 +306,6 @@ services:
       couchdb0.logauditor:
         condition: service_healthy
 
-  # CouchDB para peer1.logauditor
   couchdb1.logauditor:
     container_name: couchdb1.logauditor
     image: couchdb:3.3.2
@@ -338,10 +325,9 @@ services:
       retries: 5
       start_period: 40s
 
-  # Peer1 de LogAuditor
   peer1.logauditor.lognetwork.com:
     container_name: peer1.logauditor.lognetwork.com
-    image: hyperledger/fabric-peer:latest
+    image: hyperledger/fabric-peer:2.5
     labels:
       service: hyperledger-fabric
     environment:
@@ -390,7 +376,6 @@ services:
       couchdb1.logauditor:
         condition: service_healthy
 
-  # CLI para interactuar con la red
   cli:
     container_name: cli
     image: hyperledger/fabric-tools:2.5
@@ -430,6 +415,3 @@ services:
       - peer1.logauditor.lognetwork.com
     networks:
       - lognetwork
-networks:
-  lognetwork:
-    driver: bridge

@@ -95,7 +95,7 @@ Application: &ApplicationDefaults
       Rule: "MAJORITY Endorsement"
   Capabilities:
     <<: *ApplicationCapabilities
- 
+
 # Configuración del servicio de ordenamiento
 Orderer: &OrdererDefaults
   OrdererType: etcdraft
@@ -146,7 +146,7 @@ Channel: &ChannelDefaults
 
 # Perfiles que definen diferentes configuraciones de red
 Profiles:
-  # Perfil para generar el bloque génesis del orderer
+  # Perfil para generar el bloque génesis del orderer (necesario para consortiums)
   LogNetworkOrdererGenesis:
     <<: *ChannelDefaults
     Orderer:
