@@ -1,0 +1,74 @@
+# core.yaml - Configuración básica del peer
+# Coloca este archivo en /home/raul/tesis-blockchain/config/peercfg/core.yaml
+
+# Configuración del peer
+peer:
+  authentication:
+    timewindow: 15m0s
+
+  deliveryclient:
+    policy: cluster  # ← CAMBIADO de "exponential" a "cluster"
+
+  id: peer0.logprovider.lognetwork.com
+  networkId: lognetwork
+
+  # Configuración de direcciones
+  address: 0.0.0.0:7051
+  addressAutoDetect: false
+
+  # Configuración de Gossip
+  gossip:
+    bootstrap: peer0.logprovider.lognetwork.com:7051
+    useLeaderElection: true
+    orgLeader: false
+    pvtData:
+      reconcileSleepInterval: 1m0s
+      reconcileBatchSize: 10
+
+  # Configuración TLS
+  tls:
+    enabled: true
+    cert:
+      file: /etc/hyperledger/fabric/tls/server.crt
+    key:
+      file: /etc/hyperledger/fabric/tls/server.key
+    rootcert:
+      file: /etc/hyperledger/fabric/tls/ca.crt
+    clientAuthRequired: false
+
+  # Configuración de la base de datos
+  state:
+    stateDatabase: CouchDB
+    couchDBConfig:
+      couchDBAddress: couchdb0.logprovider:5984
+      username: admin
+      password: adminpw
+
+  # Configuración de archivos
+  fileSystemPath: /var/hyperledger/production
+
+  # Configuración MSP
+  mspConfigPath: /etc/hyperledger/fabric/msp
+  localMspId: LogProviderMSP
+
+  # Configuración BCCSP (Blockchain Crypto Service Provider)
+  BCCSP:
+    Default: SW
+    SW:
+      Hash: SHA2
+      Security: 256
+      FileKeyStore:
+        KeyStore: /var/hyperledger/production/msp/keystore
+
+# Configuración de chaincode
+chaincode:
+  logging:
+    spec: INFO
+
+# Configuración de logging
+logging:
+  spec: INFO
+
+# Configuración de métricas
+metrics:
+  provider: disabled

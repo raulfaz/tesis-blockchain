@@ -1,0 +1,28 @@
+# crypto-config.yaml
+# Configuración para generar certificados y claves para la red blockchain
+
+OrdererOrgs:
+  - Name: OrdererOrg
+    Domain: lognetwork.com
+    EnableNodeOUs: true
+    Specs:
+      - Hostname: orderer
+    Users:
+      Count: 1
+
+PeerOrgs:
+  - Name: LogProvider
+    Domain: logprovider.lognetwork.com
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+
+  - Name: LogAuditor
+    Domain: logauditor.lognetwork.com
+    EnableNodeOUs: true
+    Template:
+      Count: 2
+    Users:
+      Count: 1

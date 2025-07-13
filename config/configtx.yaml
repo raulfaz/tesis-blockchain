@@ -1,0 +1,174 @@
+# configtx.yaml
+# Archivo de configuración para generar el bloque génesis y la configuración del canal
+# Define las políticas, organizaciones y parámetros de la red
+
+Organizations:
+  # Organización Orderer
+  - &OrdererOrg
+    Name: OrdererOrg
+    ID: OrdererMSP
+    MSPDir: /home/raul/tesis-blockchain/crypto/ordererOrganizations/lognetwork.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Writers:
+        Type: Signature
+        Rule: "OR('OrdererMSP.member')"
+      Admins:
+        Type: Signature
+        Rule: "OR('OrdererMSP.admin')"
+    OrdererEndpoints:
+      - orderer.lognetwork.com:7050
+
+  # Organización LogProvider
+  - &LogProvider
+    Name: LogProviderMSP
+    ID: LogProviderMSP
+    MSPDir: /home/raul/tesis-blockchain/crypto/peerOrganizations/logprovider.lognetwork.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('LogProviderMSP.admin', 'LogProviderMSP.peer', 'LogProviderMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('LogProviderMSP.admin', 'LogProviderMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('LogProviderMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('LogProviderMSP.peer')"
+    AnchorPeers:
+      - Host: peer0.logprovider.lognetwork.com
+        Port: 7051
+
+  # Organización LogAuditor
+  - &LogAuditor
+    Name: LogAuditorMSP
+    ID: LogAuditorMSP
+    MSPDir: /home/raul/tesis-blockchain/crypto/peerOrganizations/logauditor.lognetwork.com/msp
+    Policies:
+      Readers:
+        Type: Signature
+        Rule: "OR('LogAuditorMSP.admin', 'LogAuditorMSP.peer', 'LogAuditorMSP.client')"
+      Writers:
+        Type: Signature
+        Rule: "OR('LogAuditorMSP.admin', 'LogAuditorMSP.client')"
+      Admins:
+        Type: Signature
+        Rule: "OR('LogAuditorMSP.admin')"
+      Endorsement:
+        Type: Signature
+        Rule: "OR('LogAuditorMSP.peer')"
+    AnchorPeers:
+      - Host: peer0.logauditor.lognetwork.com
+        Port: 9051
+
+# Capacidades que define qué funcionalidades están disponibles en cada versión
+Capabilities:
+  Channel: &ChannelCapabilities
+    V2_0: true
+  Orderer: &OrdererCapabilities
+    V2_0: true
+  Application: &ApplicationCapabilities
+    V2_0: true
+
+# Configuración de la aplicación (chaincode y políticas de endorsement)
+Application: &ApplicationDefaults
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    LifecycleEndorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+    Endorsement:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Endorsement"
+  Capabilities:
+    <<: *ApplicationCapabilities
+ 
+# Configuración del servicio de ordenamiento
+Orderer: &OrdererDefaults
+  OrdererType: etcdraft
+  Addresses:
+    - orderer.lognetwork.com:7050
+  EtcdRaft:
+    Consenters:
+      - Host: orderer.lognetwork.com
+        Port: 7050
+        ClientTLSCert: /home/raul/tesis-blockchain/crypto/ordererOrganizations/lognetwork.com/orderers/orderer.lognetwork.com/tls/server.crt
+        ServerTLSCert: /home/raul/tesis-blockchain/crypto/ordererOrganizations/lognetwork.com/orderers/orderer.lognetwork.com/tls/server.crt
+  BatchTimeout: 2s
+  BatchSize:
+    MaxMessageCount: 10
+    AbsoluteMaxBytes: 99 MB
+    PreferredMaxBytes: 512 KB
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    BlockValidation:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+  Capabilities:
+    <<: *OrdererCapabilities
+
+# Configuración del canal
+Channel: &ChannelDefaults
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+  Capabilities:
+    <<: *ChannelCapabilities
+
+# Perfiles que definen diferentes configuraciones de red
+Profiles:
+  # Perfil para generar el bloque génesis del orderer
+  LogNetworkOrdererGenesis:
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - *OrdererOrg
+      Capabilities:
+        <<: *OrdererCapabilities
+    Consortiums:
+      LogConsortium:
+        Organizations:
+          - *LogProvider
+          - *LogAuditor
+
+  # Perfil para crear el canal de logs de seguridad
+  SecurityLogsChannel:
+    Consortium: LogConsortium
+    <<: *ChannelDefaults
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - *LogProvider
+        - *LogAuditor
+      Capabilities:
+        <<: *ApplicationCapabilities
