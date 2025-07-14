@@ -14,7 +14,7 @@ networks:
 services:
   orderer.lognetwork.com:
     container_name: orderer.lognetwork.com
-    image: hyperledger/fabric-orderer:2.2
+    image: hyperledger/fabric-orderer:2.5
     labels:
       service: hyperledger-fabric
     environment:
@@ -100,7 +100,7 @@ services:
 
   peer0.logprovider.lognetwork.com:
     container_name: peer0.logprovider.lognetwork.com
-    image: hyperledger/fabric-peer:2.2
+    image: hyperledger/fabric-peer:2.5
     labels:
       service: hyperledger-fabric
     environment:
@@ -133,7 +133,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_REQUESTTIMEOUT=35s
       - CORE_CHAINCODE_EXTERNALBUILDERS=[]
       - CORE_CHAINCODE_MODE=net
-      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:2.2
+      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:2.5
       - CORE_CHAINCODE_GOLANG_RUNTIME=hyperledger/fabric-baseos:2.5
       - CORE_CHAINCODE_NODE_RUNTIME=hyperledger/fabric-nodeenv:2.5
       - CORE_CHAINCODE_JAVA_RUNTIME=hyperledger/fabric-javaenv:2.5
@@ -179,7 +179,7 @@ services:
 
   peer1.logprovider.lognetwork.com:
     container_name: peer1.logprovider.lognetwork.com
-    image: hyperledger/fabric-peer:2.2
+    image: hyperledger/fabric-peer:2.5
     labels:
       service: hyperledger-fabric
     environment:
@@ -212,7 +212,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_REQUESTTIMEOUT=35s
       - CORE_CHAINCODE_EXTERNALBUILDERS=[]
       - CORE_CHAINCODE_MODE=net
-      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:2.2
+      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:2.5
       - CORE_CHAINCODE_GOLANG_RUNTIME=hyperledger/fabric-baseos:2.5
       - CORE_CHAINCODE_NODE_RUNTIME=hyperledger/fabric-nodeenv:2.5
       - CORE_CHAINCODE_JAVA_RUNTIME=hyperledger/fabric-javaenv:2.5
@@ -278,7 +278,7 @@ services:
 
   peer0.logauditor.lognetwork.com:
     container_name: peer0.logauditor.lognetwork.com
-    image: hyperledger/fabric-peer:2.2
+    image: hyperledger/fabric-peer:2.5
     labels:
       service: hyperledger-fabric
     environment:
@@ -311,7 +311,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_REQUESTTIMEOUT=35s
       - CORE_CHAINCODE_EXTERNALBUILDERS=[]
       - CORE_CHAINCODE_MODE=net
-      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:2.2
+      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:2.5
       - CORE_CHAINCODE_GOLANG_RUNTIME=hyperledger/fabric-baseos:2.5
       - CORE_CHAINCODE_NODE_RUNTIME=hyperledger/fabric-nodeenv:2.5
       - CORE_CHAINCODE_JAVA_RUNTIME=hyperledger/fabric-javaenv:2.5
@@ -357,7 +357,7 @@ services:
 
   peer1.logauditor.lognetwork.com:
     container_name: peer1.logauditor.lognetwork.com
-    image: hyperledger/fabric-peer:2.2
+    image: hyperledger/fabric-peer:2.5
     labels:
       service: hyperledger-fabric
     environment:
@@ -390,7 +390,7 @@ services:
       - CORE_LEDGER_STATE_COUCHDBCONFIG_REQUESTTIMEOUT=35s
       - CORE_CHAINCODE_EXTERNALBUILDERS=[]
       - CORE_CHAINCODE_MODE=net
-      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:2.2
+      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:2.5
       - CORE_CHAINCODE_GOLANG_RUNTIME=hyperledger/fabric-baseos:2.5
       - CORE_CHAINCODE_NODE_RUNTIME=hyperledger/fabric-nodeenv:2.5
       - CORE_CHAINCODE_JAVA_RUNTIME=hyperledger/fabric-javaenv:2.5
@@ -417,7 +417,7 @@ services:
 
   cli:
     container_name: cli
-    image: hyperledger/fabric-tools:2.2
+    image: hyperledger/fabric-tools:2.5
     tty: true
     stdin_open: true
     environment:
@@ -435,7 +435,7 @@ services:
       - CHANNEL_NAME=security-logs-channel
       - CHAINCODE_NAME=LogManager
       - CC_SRC_PATH=/opt/gopath/src/chaincode/logmanager/
-      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:2.2
+      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:2.5
       - CORE_CHAINCODE_NODE_RUNTIME=hyperledger/fabric-nodeenv:2.5
       - ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/lognetwork.com/tlsca/tlsca.lognetwork.com-cert.pem
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer

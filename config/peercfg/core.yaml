@@ -55,17 +55,17 @@ peer:
 # Configuración de chaincode - CLAVE PARA SOLUCIONAR EL PROBLEMA
 chaincode:
   # Configuración del builder de chaincode
-  builder: hyperledger/fabric-ccenv:2.5
+  builder: hyperledger/fabric-ccenv:2.2
   pull: false
 
   # Runtime para diferentes lenguajes
   golang:
-    runtime: hyperledger/fabric-baseos:2.5
+    runtime: hyperledger/fabric-baseos:2.2
     dynamicLink: false
   node:
-    runtime: hyperledger/fabric-nodeenv:2.5
+    runtime: hyperledger/fabric-nodeenv:2.2
   java:
-    runtime: hyperledger/fabric-javaenv:2.5
+    runtime: hyperledger/fabric-javaenv:2.2
 
   # Configuraciones críticas para evitar el builder externo
   mode: net

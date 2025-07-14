@@ -1,6 +1,6 @@
 # configtx.yaml
 # Archivo de configuración para generar el bloque génesis y la configuración del canal
-# Configurado para usar método LEGACY (sin lifecycle)
+# Define las políticas, organizaciones y parámetros de la red
 
 Organizations:
   # Organización Orderer
@@ -65,18 +65,18 @@ Organizations:
       - Host: peer0.logauditor.lognetwork.com
         Port: 9051
 
-# Capacidades - CONFIGURACIÓN LEGACY
+# Capacidades que define qué funcionalidades están disponibles en cada versión
 Capabilities:
   Channel: &ChannelCapabilities
     V2_0: true
   Orderer: &OrdererCapabilities
     V2_0: true
   Application: &ApplicationCapabilities
-    V1_4_2: true  # LEGACY - sin lifecycle
+    V2_0: true
 
-# Configuración de la aplicación - SIN LIFECYCLE
+# Configuración de la aplicación (chaincode y políticas de endorsement)
 Application: &ApplicationDefaults
-  Organizations: []
+  Organizations:
   Policies:
     Readers:
       Type: ImplicitMeta
@@ -87,7 +87,6 @@ Application: &ApplicationDefaults
     Admins:
       Type: ImplicitMeta
       Rule: "MAJORITY Admins"
-    # POLÍTICAS DE LIFECYCLE COMENTADAS PARA USAR LEGACY:
     # LifecycleEndorsement:
     #   Type: ImplicitMeta
     #   Rule: "MAJORITY Endorsement"
@@ -113,7 +112,7 @@ Orderer: &OrdererDefaults
     MaxMessageCount: 10
     AbsoluteMaxBytes: 99 MB
     PreferredMaxBytes: 512 KB
-  Organizations: []
+  Organizations:
   Policies:
     Readers:
       Type: ImplicitMeta
@@ -147,7 +146,7 @@ Channel: &ChannelDefaults
 
 # Perfiles que definen diferentes configuraciones de red
 Profiles:
-  # Perfil para generar el bloque génesis del orderer
+  # Perfil para generar el bloque génesis del orderer (necesario para consortiums)
   LogNetworkOrdererGenesis:
     <<: *ChannelDefaults
     Orderer:
@@ -162,7 +161,7 @@ Profiles:
           - *LogProvider
           - *LogAuditor
 
-  # Perfil para crear el canal de logs de seguridad - CONFIGURACIÓN LEGACY
+  # Perfil para crear el canal de logs de seguridad
   SecurityLogsChannel:
     Consortium: LogConsortium
     <<: *ChannelDefaults
